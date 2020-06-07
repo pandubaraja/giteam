@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Giteam</string>
+    <string name="search">Find your teammates</string>
+    <string name="user_not_found">User not found</string>
+    <string name="loading">Fetching users…</string>
+    <string name="error">Hmm weird, let\'s try again</string>
+    <string name="error_connection">SOS, our connection is lost</string>
+    <string name="error_github_api_rate_limit">Slow down! It\'s dangerous to go that fast.</string>
+    <string name="no_more_users">No more users</string>
+    <string name="idle">Let\'s find your teammate</string>
+    <string name="try_again">Try again</string>
+    <string name="mode">Mode</string>
+</resources>
