@@ -15,7 +15,18 @@ fun Activity.showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, message, duration).show()
 }
 
-fun Activity.showSnackBar(constraintLayout: ConstraintLayout, message: String){
-    Snackbar
-        .make(constraintLayout, message, Snackbar.LENGTH_LONG).show()
+fun Activity.showSnackBar(constraintLayout: ConstraintLayout,
+                          message: String,
+                          actionMessage: String? = null,
+                          onClick: (() -> Unit)? = null){
+    val snackBar = Snackbar
+        .make(constraintLayout, message, Snackbar.LENGTH_LONG)
+
+    if(actionMessage != null){
+        snackBar.setAction(actionMessage) {
+            onClick?.invoke()
+        }
+    }
+
+    snackBar.show()
 }
