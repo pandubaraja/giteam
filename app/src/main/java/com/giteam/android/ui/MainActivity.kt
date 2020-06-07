@@ -29,6 +29,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     )
 
     private var isPermittedToFetchAgain = false
+    private var isShowingSnackbarNeeded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +76,9 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
                 addOnScrollListener(object: RecyclerView.OnScrollListener() {
                     override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                         super.onScrollStateChanged(recyclerView, newState)
+
+                        //No Need To Show Snackbar when at bottom page because there is already message shown in recyclerview
+                        isShowingSnackbarNeeded = recyclerView.canScrollVertically(1)
 
                         if(isPermittedToFetchAgain.not() && newState == RecyclerView.SCROLL_STATE_DRAGGING) {
                             isPermittedToFetchAgain = true
@@ -123,11 +127,20 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
                 }
                 is State.Success -> {
-
+                    if(isShowingSnackbarNeeded) {
+                        showSnackBar(mViewBinding.constraint,
+                            getString(R.string.new_users_fetched),
+                            actionMessage = getString(R.string.see),
+                            onClick = {
+                                mViewBinding.recyclerView.smoothScrollToPosition(mViewModel.newUserFirstPosition)
+                        })
+                    }
                 }
                 is State.Error -> {
-                    it.messageResId?.let { id ->
-                        showSnackBar(mViewBinding.constraint, getString(id))
+                    if(isShowingSnackbarNeeded) {
+                        it.messageResId?.let { id ->
+                            showSnackBar(mViewBinding.constraint, getString(id))
+                        }
                     }
                 }
                 is State.Idle -> {

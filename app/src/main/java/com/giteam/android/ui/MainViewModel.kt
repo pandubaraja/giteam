@@ -24,12 +24,17 @@ class MainViewModel
     private val _usersLiveData = MutableLiveData<State<List<BaseViewItem>>>()
     private var job: Job? = null
     private var page = 1
-    private var perPage = 21
+    private var perPage = 20
     private var bufferPerPage = 1
+    private var perPageBufferedNextPage = perPage + bufferPerPage
     private var currentName = ""
+    private var _newUserFirstPosition = 0
 
     val usersLiveData: LiveData<State<List<BaseViewItem>>>
         get() = _usersLiveData
+
+    val newUserFirstPosition
+        get() = _newUserFirstPosition
 
     init {
         showIdleState()
@@ -48,7 +53,7 @@ class MainViewModel
         showLoadingState(reset = true)
 
         job = viewModelScope.launch {
-            usersRepository.getUsersWithUsername(name, page, perPage)
+            usersRepository.getUsersWithUsername(name, page, perPageBufferedNextPage)
                 .handleErrors(
                     onConnectionError = {
                         showErrorState(R.string.error_connection)
@@ -75,7 +80,7 @@ class MainViewModel
 
         job?.cancel()
         job = viewModelScope.launch {
-            usersRepository.getUsersWithUsername(currentName, page + 1, perPage)
+            usersRepository.getUsersWithUsername(currentName, page + 1, perPageBufferedNextPage)
                 .handleErrors(
                     onConnectionError = {
                         showErrorState(R.string.error_connection)
@@ -99,14 +104,14 @@ class MainViewModel
     }
 
     private fun showEmptyState(){
-        _usersLiveData.postValue(State.Success(emptyItems()))
+        _usersLiveData.postValue(State.Error(emptyItems()))
     }
 
     private fun showSuccessState(items: List<BaseViewItem> ){
         val currentItems = _usersLiveData.value?.data?.toMutableList() ?: mutableListOf()
         val newItems = items.toMutableList()
 
-        if(items.size < perPage - bufferPerPage) {
+        if(items.size <= perPageBufferedNextPage - bufferPerPage) {
             //No More Item To Load
             val isNoMoreDataToLoad = currentItems.firstOrNull { it is NoMoreDataItem } != null
             if(isNoMoreDataToLoad.not()) newItems.addAll(noMoreItems())
@@ -122,6 +127,10 @@ class MainViewModel
 
         currentItems.firstOrNull { it is LoadingStateItem }?.also {
             currentItems.remove(it)
+        }
+
+        if(currentItems.isNotEmpty() && newItems.isNotEmpty()) {
+            _newUserFirstPosition = (currentItems.size - 1) + (newItems.size / 4)
         }
 
         _usersLiveData.postValue(State.Success(appendNewItems(currentItems, newItems)))
