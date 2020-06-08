@@ -68,7 +68,6 @@ dependencies {
     implementation(Android.appcompat)
     implementation(Android.ktx)
     implementation(Android.constraintLayout)
-    implementation(Android.paging)
 
     // Architecture Components
     implementation(Dependencies.viewModel)
