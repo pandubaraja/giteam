@@ -46,5 +46,4 @@ object Android {
     const val appcompat = "androidx.appcompat:appcompat:1.1.0"
     const val ktx = "androidx.core:core-ktx:1.2.0"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:1.1.3"
-    const val paging = "androidx.paging:paging-runtime:2.1.2"
 }
