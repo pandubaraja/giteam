@@ -4,6 +4,7 @@ import android.app.Application
 import com.giteam.android.App
 import com.giteam.android.di.builder.ActivityBuilder
 import com.giteam.android.di.modules.ApiModule
+import com.giteam.android.di.modules.RepositoryModule
 import com.giteam.android.di.modules.ViewModelFactoryModule
 import com.giteam.android.di.modules.ViewModelModule
 import dagger.BindsInstance
@@ -18,6 +19,7 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AndroidInjectionModule::class,
+        RepositoryModule::class,
         ApiModule::class,
         ActivityBuilder::class,
         ViewModelFactoryModule::class,
